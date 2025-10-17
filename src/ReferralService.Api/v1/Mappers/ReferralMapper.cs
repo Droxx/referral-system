@@ -14,6 +14,7 @@ public class ReferralMapper : IMapper<DataReferral, ContractReferral>
             Status = Enum.Parse<Contracts.v1.ReferralStatus>(input.Status.ToString()),
             InvitedById = input.InvitedById,
             InvitedEmail = input.InvitedEmail,
+            ReferredUserId = input.ReferredUserId,
             InvitedAtUtc = input.InvitedAtUtc,
             RentalId = input.RentalId
         };
@@ -27,6 +28,7 @@ public class ReferralMapper : IMapper<DataReferral, ContractReferral>
             Status = Enum.Parse<Data.Models.ReferralStatus>(input.Status.ToString()),
             InvitedById = input.InvitedById,
             InvitedEmail = input.InvitedEmail,
+            ReferredUserId = input.ReferredUserId,
             InvitedAtUtc = input.InvitedAtUtc,
             RentalId = input.RentalId
         };

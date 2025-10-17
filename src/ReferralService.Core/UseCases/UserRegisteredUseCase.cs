@@ -16,7 +16,7 @@ public class UserRegisteredUseCase(
     {
         logger.LogInformation($"Registered user: {input.UserId} with email: {input.Email}. Checking for referrals.");
         // Get all referrals for this email
-        var referrals = await repository.Search(r => r.InvitedEmail == input.Email, cancellationToken);
+        var referrals = await repository.Search(r => r.InvitedEmail == input.Email && r.Status == ReferralStatus.Pending, cancellationToken);
         
         if (referrals.Any())
         {
@@ -24,7 +24,7 @@ public class UserRegisteredUseCase(
             var mostRecentReferral = referrals
                 .OrderByDescending(r => r.InvitedAtUtc)
                 .First();
-            mostRecentReferral.ReferredUserId = input.UserId;
+            mostRecentReferral.ReferredUserId = input.UserId; 
             mostRecentReferral.Status = ReferralStatus.Accepted;
             await repository.Update(mostRecentReferral.Id, mostRecentReferral, cancellationToken);
             

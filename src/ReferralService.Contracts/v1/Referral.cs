@@ -18,6 +18,11 @@ public class Referral
     public required string InvitedEmail { get; set; }
     
     /// <summary>
+    /// ID of the referred user, once they have registered
+    /// </summary>
+    public Guid? ReferredUserId { get; set; }
+    
+    /// <summary>
     /// Date and time when the invitation was sent (in UTC)
     /// </summary>
     public DateTime InvitedAtUtc { get; set; }

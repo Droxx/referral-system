@@ -23,6 +23,7 @@ public static class ServiceCollection
         services.AddScoped<InviteUserUseCase, InviteUserUseCase>();
         services.AddScoped<IUserRegisteredUseCase, UserRegisteredUseCase>();
         services.AddScoped<IRentalChangedUseCase, RentalChangedUseCase>();
+        services.AddScoped<IGetReferralsUseCase, GetReferralsUseCase>();
         
         return services;
     }

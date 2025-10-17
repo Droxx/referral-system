@@ -7,16 +7,27 @@ namespace ReferralService.Core.UseCases;
 
 public record InviteUserUseCaseInput(Guid UserId, string Email);
 
-public interface IInviteUserUseCase : IUseCase<InviteUserUseCaseInput, Referral>;
+public interface IInviteUserUseCase : IUseCase<InviteUserUseCaseInput, Referral?>;
 
 public class InviteUserUseCase(
     ILogger<InviteUserUseCase> logger,
     IEmailService emailService,
     IRepository<Referral> repository) : IInviteUserUseCase
 {
-    public async Task<Referral> Handle(InviteUserUseCaseInput input, CancellationToken cancellationToken = default)
+    public async Task<Referral?> Handle(InviteUserUseCaseInput input, CancellationToken cancellationToken = default)
     {
         logger.LogInformation($"Inviting email: {input.Email} from user: {input.UserId}");
+        
+        var acceptedReferrals = await repository.Search(r =>
+            r.InvitedEmail == input.Email &&
+            (r.Status == ReferralStatus.Accepted || r.Status == ReferralStatus.Completed), cancellationToken);
+
+        if (acceptedReferrals.Any())
+        {
+            logger.LogInformation("Email: {Email} has already been referred and accepted.", input.Email);
+            return null;
+        }
+        
         var referral = new Referral
         {
             Id = Guid.NewGuid(),

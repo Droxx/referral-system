@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Options;
 using ReferralService.Core.Settings;
 using ReferralService.DependencyInjection;
 
@@ -12,7 +13,12 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddApiServices();
 
-builder.Services.Configure<ServiceUrisSettings>(builder.Configuration.GetSection("ServiceUris"));
+var serviceUris = new ServiceUrisSettings();
+builder.Configuration.GetSection("ServiceUris").Bind(serviceUris);
+
+var section = builder.Configuration.GetSection("ServiceUris");
+builder.Services.Configure<ServiceUrisSettings>(section);
+builder.Services.AddSingleton(resolver => resolver.GetRequiredService<IOptions<ServiceUrisSettings>>().Value);
 
 var app = builder.Build();
 
