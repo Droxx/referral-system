@@ -19,8 +19,14 @@ public class RentalChangedUseCase(
         logger.LogInformation("Handling rental changed for RentalId: {RentalId},State: {State}",
             useCaseInput.RentalId, useCaseInput.State);
         
+        // TODO: I was considering tracking the rental IDs, but this seems unnecessary for now.
+
+        // At this point, we only care about finished rentals
+        if (useCaseInput.State != RentalState.Finished)
+            return;
+    
         var referral = (await repository.Search(r =>
-            r.ReferredUserId == useCaseInput.RenterId &&
+                r.ReferredUserId == useCaseInput.RenterId &&
                 r.Status == ReferralStatus.Accepted, cancellationToken))
             .FirstOrDefault();
 
@@ -29,20 +35,15 @@ public class RentalChangedUseCase(
             logger.LogInformation("No accepted referral found for RenterId: {RenterId}", useCaseInput.RenterId);
             return;
         }
-
-        // TODO: I was considering tracking the rental IDs, but this seems unnecessary for now.
         
-        if (useCaseInput.State == RentalState.Finished)
-        {
-            logger.LogInformation("Mutating credits for ReferrerId: {OwnerId} due to completed rental RentalId: {RentalId}",
-                referral.InvitedById, useCaseInput.RentalId);
-            
-            await creditService.MutateCredits(useCaseInput.RenterId, 5, 
-                $"Referral bonus for invited user {referral.ReferredUserId} completed rental: {useCaseInput.RentalId}");
+        logger.LogInformation("Mutating credits for ReferrerId: {OwnerId} due to completed rental RentalId: {RentalId}",
+            referral.InvitedById, useCaseInput.RentalId);
+        
+        await creditService.MutateCredits(useCaseInput.RenterId, 5, 
+            $"Referral bonus for invited user {referral.ReferredUserId} completed rental: {useCaseInput.RentalId}");
 
-            referral.Status = ReferralStatus.Completed;
-            await repository.Update(referral.Id, referral, cancellationToken);
-            await repository.SaveChanges(cancellationToken);
-        }
+        referral.Status = ReferralStatus.Completed;
+        await repository.Update(referral.Id, referral, cancellationToken);
+        await repository.SaveChanges(cancellationToken);
     }
 }

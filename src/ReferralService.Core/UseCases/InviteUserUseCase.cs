@@ -19,6 +19,7 @@ public class InviteUserUseCase(
         logger.LogInformation($"Inviting email: {input.Email} from user: {input.UserId}");
         
         // TODO: Here I would add a check to see if the InviteeID exists in the system.
+        // TODO: I would also check in the user-system to see if the invited email is already registered.
         
         var acceptedReferrals = await repository.Search(r =>
             r.InvitedEmail == input.Email &&

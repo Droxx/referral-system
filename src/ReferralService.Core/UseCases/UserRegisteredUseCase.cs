@@ -30,8 +30,8 @@ public class UserRegisteredUseCase(
             mostRecentReferral.Status = ReferralStatus.Accepted;
             await repository.Update(mostRecentReferral.Id, mostRecentReferral, cancellationToken);
             
-            await creditService.MutateCredits(mostRecentReferral.InvitedById, 10, 
-                $"Referral bonus for inviting: {mostRecentReferral.InvitedEmail}");
+            await creditService.MutateCredits(input.UserId, 10, 
+                $"Referral bonus for new users that have been referred");
             
             // Mark all other referrals as expired
             foreach (var expiredReferral in referrals.Where(r => r.Id != mostRecentReferral.Id))
