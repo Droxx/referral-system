@@ -30,6 +30,8 @@ public class RentalChangedUseCase(
             return;
         }
 
+        // TODO: I was considering tracking the rental IDs, but this seems unnecessary for now.
+        
         if (useCaseInput.State == RentalState.Finished)
         {
             logger.LogInformation("Mutating credits for ReferrerId: {OwnerId} due to completed rental RentalId: {RentalId}",

@@ -22,7 +22,7 @@ public class InviteUserUseCase(
         
         var acceptedReferrals = await repository.Search(r =>
             r.InvitedEmail == input.Email &&
-            (r.Status == ReferralStatus.Accepted || r.Status == ReferralStatus.Completed), cancellationToken);
+            (r.Status != ReferralStatus.Pending), cancellationToken);
 
         if (acceptedReferrals.Any())
         {
