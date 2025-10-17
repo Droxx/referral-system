@@ -1,0 +1,6 @@
+@ReferralService_HostAddress = http://localhost:5138
+
+GET {{ReferralService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
