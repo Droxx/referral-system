@@ -1,59 +1,75 @@
 using System.Data;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using ReferralService.Data.Models;
 
 namespace ReferralService.Data.Repositories.InMemory;
 
-public abstract class BaseMemoryRepository<T>(IMemoryCache cache, ILogger<BaseMemoryRepository<T>> logger) : IRepository<T> where T : IRepositoryObject
+/// <summary>
+/// Base implementation of an in-memory repository using IMemoryCache.
+/// </summary>
+public abstract class BaseMemoryRepository<T>(DbContext context, ILogger<BaseMemoryRepository<T>> logger) : IRepository<T> where T : class, IRepositoryObject
 {
-    protected abstract string CacheKey { get; }
+    protected abstract string SetKey { get; }
+    protected DbSet<T> Set => context.Set<T>(SetKey);  
     
-    private string GetItemKey(T item) => GetItemKey(item.Reference);
-    private string GetItemKey(string reference) => $"{CacheKey}_{reference}";
-    private static MemoryCacheEntryOptions CacheOptions => new ()
+    public async Task Store(T obj)
     {
-        Priority = CacheItemPriority.NeverRemove
-    };
-    
-    public Task Store(T obj)
-    {
-        logger.LogInformation("Storing object with reference {Reference} in cache under key {CacheKey}", obj.Reference, CacheKey);
-        if(cache.TryGetValue(GetItemKey(obj), out _))
-            throw new DuplicateNameException($"An item with reference {obj.Reference} already exists in the repository.");
-        cache.Set(GetItemKey(obj), obj, CacheOptions);
-        return Task.CompletedTask;
+        logger.LogInformation($"Storing {typeof(T).Name} with Id: {obj.Id}");
+        if(await Set.AnyAsync(e => e.Id == obj.Id))
+            throw new DuplicateNameException($"An object with Id {obj.Id} already exists.");
+        await Set.AddAsync(obj);
     }
 
-    public Task Update(string reference, T obj)
+    public async Task Update(Guid id, T obj)
     {
-        logger.LogInformation("Updating object with reference {Reference} in cache under key {CacheKey}", reference, CacheKey);
-        if(!cache.TryGetValue(GetItemKey(obj), out _))
-            throw new KeyNotFoundException($"No item with reference {reference} exists in the repository.");
-        cache.Set(GetItemKey(obj), obj, CacheOptions);
-        return Task.CompletedTask;
+        logger.LogInformation($"Updating {typeof(T).Name} with Id: {obj.Id}");
+        var existing = await Set.SingleOrDefaultAsync(e => e.Id == id);
+        if (existing == null)
+            throw new KeyNotFoundException($"No object found with Id {id}.");
+
+        context.Entry(existing).CurrentValues.SetValues(obj);
     }
 
-    public Task<T> Get(string reference)
+    public Task<List<T>> Search(Func<T, bool> predicate)
     {
-        logger.LogInformation("Retrieving object with reference {Reference} from cache under key {CacheKey}", reference, CacheKey);
-        if(!cache.TryGetValue(GetItemKey(reference), out T? obj) || obj == null)
-            throw new KeyNotFoundException($"No item with reference {reference} exists in the repository.");
-        return Task.FromResult(obj);
+        logger.LogInformation($"Searching {typeof(T).Name} with given predicate");
+        return Task.FromResult(Set
+            .Where(predicate)
+            .ToList());
     }
 
-    public Task Delete(string reference)
+    public async Task<T> Get(Guid id)
     {
-        logger.LogInformation("Deleting object with reference {Reference} from cache under key {CacheKey}", reference, CacheKey);
-        if(!cache.TryGetValue(GetItemKey(reference), out _))
-            throw new KeyNotFoundException($"No item with reference {reference} exists in the repository.");
-        cache.Remove(GetItemKey(reference));
-        return Task.CompletedTask;
+        logger.LogInformation($"Getting {typeof(T).Name} with Id: {id}");
+        var obj = await Set.SingleOrDefaultAsync(e => e.Id == id);
+        if (obj == null)
+            throw new KeyNotFoundException($"No object found with Id {id}.");
+        return obj;
     }
 
-    public Task<bool> Exists(string reference)
+    public async Task Delete(Guid id)
+    { 
+        var entity = await Get(id);
+        await Delete(entity);
+    }
+
+    public Task Delete(T obj)
     {
-        logger.LogInformation("Checking existence of object with reference {Reference} in cache under key {CacheKey}", reference, CacheKey);
-        return Task.FromResult(cache.TryGetValue(GetItemKey(reference), out _));
+        logger.LogInformation($"Deleting {typeof(T).Name} with Id: {obj.Id}");
+        Set.Remove(obj);
+        return Task.CompletedTask; 
+    }
+
+    public async Task<bool> Exists(Guid id)
+    {
+        logger.LogInformation($"Checking existence of {typeof(T).Name} with Id: {id}");
+        return await Set.AnyAsync(e => e.Id == id);
+    }
+
+    public async Task SaveChanges()
+    {
+        await context.SaveChangesAsync();
     }
 }

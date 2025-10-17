@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using ReferralService.Data;
 using ReferralService.Data.Models;
 using ReferralService.Data.Repositories;
@@ -18,6 +19,10 @@ public static class ServiceCollection
     
     private static IServiceCollection AddDataServices(this IServiceCollection services)
     {
+        services.AddDbContext<DbContext>(options =>
+        {
+            options.UseInMemoryDatabase("ReferralServiceDb");
+        });
         services.AddScoped<IRepository<Referral>, ReferralRepository>();
         
         return services;

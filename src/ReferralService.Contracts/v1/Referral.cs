@@ -2,5 +2,5 @@
 
 public class Referral
 {
-    public string Reference { get; set; }
+    public Guid Id { get; set; }
 }

@@ -10,4 +10,9 @@
       <ProjectReference Include="..\ReferralService.Data\ReferralService.Data.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Services\" />
+      <Folder Include="UseCases\" />
+    </ItemGroup>
+
 </Project>

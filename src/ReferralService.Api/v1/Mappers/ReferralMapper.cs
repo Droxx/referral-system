@@ -10,7 +10,7 @@ public class ReferralMapper : IMapper<DataReferral, ContractReferral>
     {
         return new()
         {
-            Reference = input.Reference
+            Id  = input.Id
         };
     }
 
@@ -18,7 +18,7 @@ public class ReferralMapper : IMapper<DataReferral, ContractReferral>
     {
         return new()
         {
-            Reference = input.Reference
+            Id = input.Id 
         };
     }
 }
