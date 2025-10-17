@@ -5,7 +5,8 @@ using ReferralService.Data.Models;
 
 namespace ReferralService.Data.Repositories.InMemory;
 
-public class ReferralRepository(DbContext context, ILogger<ReferralRepository> logger) : BaseMemoryRepository<Referral>(context, logger)
+public class ReferralRepository(ReferralServiceDbContext context, ILogger<ReferralRepository> logger) : BaseMemoryRepository<Referral>(context, logger)
 {
     protected override string SetKey => "Referrals";
+    protected override DbSet<Referral> Set => context.Referrals;
 }

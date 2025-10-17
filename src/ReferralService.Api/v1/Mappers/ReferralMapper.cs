@@ -10,7 +10,12 @@ public class ReferralMapper : IMapper<DataReferral, ContractReferral>
     {
         return new()
         {
-            Id  = input.Id
+            Id  = input.Id,
+            Status = Enum.Parse<Contracts.v1.ReferralStatus>(input.Status.ToString()),
+            InvitedById = input.InvitedById,
+            InvitedEmail = input.InvitedEmail,
+            InvitedAtUtc = input.InvitedAtUtc,
+            RentalId = input.RentalId
         };
     }
 
@@ -18,7 +23,12 @@ public class ReferralMapper : IMapper<DataReferral, ContractReferral>
     {
         return new()
         {
-            Id = input.Id 
+            Id  = input.Id,
+            Status = Enum.Parse<Data.Models.ReferralStatus>(input.Status.ToString()),
+            InvitedById = input.InvitedById,
+            InvitedEmail = input.InvitedEmail,
+            InvitedAtUtc = input.InvitedAtUtc,
+            RentalId = input.RentalId
         };
     }
 }
