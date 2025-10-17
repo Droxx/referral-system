@@ -32,6 +32,7 @@ There are additional GET endpoints to retrieve referral information for testing 
 
 ## Improvements
 - Flesh out my stubbed email service to provide actual examples of how i would call that service.
+- Obviously this is a very small scale implementation, done quickly. I would, in a working environment. Consider a much more extensible system, but I would need more context about services I am dependant on.
 - Link more closely with the user and rental systems to ensure data consistency. And prevent abuse
 - Perhaps work more with the Owner and Rental IDs given in the webhook payload. But for the purposes of this assignment. I made the assumption that the rental service would handle that logic.
 - Validation on email addresses
