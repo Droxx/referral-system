@@ -6,15 +6,17 @@ using ReferralService.Data.Models;
 
 namespace RentalService.UnitTests;
 
-public class InviteUserFlow : TestBase, IDisposable
+public class InviteUserFlow : TestBase
 {
     private readonly Mock<IEmailService> _emailService = new();
+    private readonly IInviteUserUseCase _sut;
 
-    private IInviteUserUseCase _sut;
-    
     public InviteUserFlow()
     {
-        _sut = new InviteUserUseCase(NullLogger<InviteUserUseCase>.Instance, _emailService.Object, ReferralRepository);
+        _sut = new InviteUserUseCase(
+            NullLogger<InviteUserUseCase>.Instance,
+            _emailService.Object,
+            ReferralRepository);
     }
     
     [Fact]
@@ -78,16 +80,5 @@ public class InviteUserFlow : TestBase, IDisposable
         Assert.Null(referral);        
         var dbRefs = await ReferralRepository.Search(r => r.InvitedEmail == dbRef.InvitedEmail);
         Assert.Equal(1, dbRefs.Count);
-    }
-
-    public void Dispose()
-    {
-        var allReferrals = ReferralRepository.Search(t => true).Result;
-        foreach (var referral in allReferrals)
-        {
-            ReferralRepository.Delete(referral).Wait();
-        }
-
-        ReferralRepository.SaveChanges().Wait();
     }
 }

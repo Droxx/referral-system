@@ -14,9 +14,26 @@ public class TestBase
     public TestBase()
     {
         var opBuilder =
-            new DbContextOptionsBuilder<ReferralServiceDbContext>().UseInMemoryDatabase("ReferralServiceTestDb");
+            new DbContextOptionsBuilder<ReferralServiceDbContext>().UseInMemoryDatabase(Guid.NewGuid().ToString());
         var dbContext = new ReferralServiceDbContext(opBuilder.Options);
 
         ReferralRepository = new ReferralRepository(dbContext, NullLogger<ReferralRepository>.Instance);
+    }
+
+    protected void ClearDb()
+    {
+        var allReferrals = ReferralRepository.Search(t => true).Result;
+        foreach (var referral in allReferrals)
+        {
+            ReferralRepository.Delete(referral).Wait();
+        }
+
+        ReferralRepository.SaveChanges().Wait();
+    }
+    
+    public void Dispose()
+    {
+        //ClearDb();
+        
     }
 }
