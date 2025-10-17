@@ -18,6 +18,11 @@ public class Referral : IRepositoryObject
     public required string InvitedEmail { get; set; }
     
     /// <summary>
+    /// ID of the referred user, once they have registered
+    /// </summary>
+    public Guid? ReferredUserId { get; set; }
+    
+    /// <summary>
     /// Date and time when the invitation was sent (in UTC)
     /// </summary>
     public required DateTime InvitedAtUtc { get; set; }
@@ -36,6 +41,7 @@ public class Referral : IRepositoryObject
 public enum ReferralStatus
 {
     Pending,
+    Expired,
     Accepted,
     Completed
 }

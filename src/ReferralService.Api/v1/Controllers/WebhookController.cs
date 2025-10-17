@@ -22,4 +22,14 @@ public class WebhookController(ILogger<WebhookController> logger) : ControllerBa
         var referral = await useCase.Handle(new UserInvitedUseCaseInput(payload.InvitedById, payload.InvitedEmail));
         return Ok(referral.Id);
     }
+    
+    [HttpPatch]
+    [Route("user-registered")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> UserRegistered([FromBody] UserRegisteredHookPayload payload, [FromServices] IUserRegisteredUseCase useCase)
+    {
+        await useCase.Handle(new UserRegisteredUseCaseInput(payload.UserId, payload.Email));
+        return Ok();
+    }
+    
 }

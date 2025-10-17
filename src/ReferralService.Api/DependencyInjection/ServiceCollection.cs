@@ -17,6 +17,7 @@ public static class ServiceCollection
 
         services.AddScoped<IGetReferralByIdUseCase, GetReferralByIdUseCase>();
         services.AddScoped<IUserInvitedUseCase, UserInvitedUseCase>();
+        services.AddScoped<IUserRegisteredUseCase, UserRegisteredUseCase>();
         
         return services;
     }
