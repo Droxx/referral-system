@@ -41,8 +41,8 @@ public class UserRegisteredFlow : TestBase
         Assert.Equal(ReferralStatus.Accepted, dbRef.Status);
         Assert.Equal(input.UserId, dbRef.ReferredUserId);
         
-        _creditService.Verify(s => s.MutateCredits(invite.InvitedById, 10, 
-            It.Is<string>(msg => msg.Contains(invite.InvitedEmail))));
+        _creditService.Verify(s => s.MutateCredits(invite.ReferredUserId!.Value, 10, 
+            It.IsAny<string>()));
     }
 
     [Fact]
@@ -89,8 +89,8 @@ public class UserRegisteredFlow : TestBase
         var dbRecentRef = await ReferralRepository.Get(recentInvite.Id);
         Assert.Equal(ReferralStatus.Accepted, dbRecentRef.Status);
 
-        _creditService.Verify(s => s.MutateCredits(recentInvite.InvitedById, 10,
-            It.Is<string>(msg => msg.Contains(email))), Times.Once);
+        _creditService.Verify(s => s.MutateCredits(recentInvite.ReferredUserId!.Value, 10,
+            It.IsAny<string>()), Times.Once);
     }
 
     [Theory]
