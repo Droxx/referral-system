@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using ReferralService.Core.Services;
 using ReferralService.Data.Models;
 using ReferralService.Data.Repositories;
 
@@ -10,6 +11,7 @@ public interface IUserRegisteredUseCase : IUseCase<UserRegisteredUseCaseInput>;
 
 public class UserRegisteredUseCase(
     ILogger<UserRegisteredUseCase> logger,
+    ICreditService creditService,
     IRepository<Referral> repository) : IUserRegisteredUseCase
 {
     public async Task Handle(UserRegisteredUseCaseInput input, CancellationToken cancellationToken = default)
@@ -27,6 +29,9 @@ public class UserRegisteredUseCase(
             mostRecentReferral.ReferredUserId = input.UserId; 
             mostRecentReferral.Status = ReferralStatus.Accepted;
             await repository.Update(mostRecentReferral.Id, mostRecentReferral, cancellationToken);
+            
+            await creditService.MutateCredits(mostRecentReferral.InvitedById, 10, 
+                $"Referral bonus for inviting: {mostRecentReferral.InvitedEmail}");
             
             // Mark all other referrals as expired
             foreach (var expiredReferral in referrals.Where(r => r.Id != mostRecentReferral.Id))

@@ -29,16 +29,14 @@ public class RentalChangedUseCase(
             logger.LogInformation("No accepted referral found for RenterId: {RenterId}", useCaseInput.RenterId);
             return;
         }
-        
+
         if (useCaseInput.State == RentalState.Finished)
         {
-            logger.LogInformation("Mutating credits for OwnerId: {OwnerId} and ReferrerId: {ReferrerId} due to completed rental RentalId: {RentalId}",
-                useCaseInput.OwnerId, referral.InvitedById, useCaseInput.RentalId);
+            logger.LogInformation("Mutating credits for ReferrerId: {OwnerId} due to completed rental RentalId: {RentalId}",
+                referral.InvitedById, useCaseInput.RentalId);
             
-            await creditService.MutateCredits(referral.InvitedById, 10, 
-                $"Referral bonus for inviting: {referral.InvitedEmail}");
             await creditService.MutateCredits(useCaseInput.RenterId, 5, 
-                $"Referral bonus for invitation by: {referral.InvitedById}");
+                $"Referral bonus for invited user {referral.ReferredUserId} completed rental: {useCaseInput.RentalId}");
 
             referral.Status = ReferralStatus.Completed;
             await repository.Update(referral.Id, referral, cancellationToken);

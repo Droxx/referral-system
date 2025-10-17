@@ -15,8 +15,7 @@ public class ReferralMapper : IMapper<DataReferral, ContractReferral>
             InvitedById = input.InvitedById,
             InvitedEmail = input.InvitedEmail,
             ReferredUserId = input.ReferredUserId,
-            InvitedAtUtc = input.InvitedAtUtc,
-            RentalId = input.RentalId
+            InvitedAtUtc = input.InvitedAtUtc
         };
     }
 
@@ -30,7 +29,6 @@ public class ReferralMapper : IMapper<DataReferral, ContractReferral>
             InvitedEmail = input.InvitedEmail,
             ReferredUserId = input.ReferredUserId,
             InvitedAtUtc = input.InvitedAtUtc,
-            RentalId = input.RentalId
         };
     }
 }

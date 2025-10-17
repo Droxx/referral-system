@@ -31,11 +31,6 @@ public class Referral : IRepositoryObject
     /// Current status of the referral
     /// </summary>
     public required ReferralStatus Status { get; set; }
-    
-    /// <summary>
-    /// ID of the first rental made by the referred user, if any
-    /// </summary>
-    public Guid? RentalId { get; set; }
 }
 
 public enum ReferralStatus
