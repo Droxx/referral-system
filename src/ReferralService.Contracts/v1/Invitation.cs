@@ -5,7 +5,7 @@ namespace ReferralService.Contracts.v1;
 /// <summary>
 /// Model representing the payload for an invitation hook.
 /// </summary>
-public class InvitationHookPayload
+public class Invitation
 {
     /// <summary>
     /// ID of the user who sent the invitation.

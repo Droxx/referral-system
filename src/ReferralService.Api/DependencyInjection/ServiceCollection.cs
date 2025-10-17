@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using ReferralService.Core.Services;
 using ReferralService.Core.UseCases;
 using ReferralService.Data;
 using ReferralService.Data.Models;
@@ -15,8 +16,10 @@ public static class ServiceCollection
         services.AddDataServices();
         services.AddMappers();
 
+        services.AddHttpClient<IEmailService, EmailService>();
+
         services.AddScoped<IGetReferralByIdUseCase, GetReferralByIdUseCase>();
-        services.AddScoped<IUserInvitedUseCase, UserInvitedUseCase>();
+        services.AddScoped<InviteUserUseCase, InviteUserUseCase>();
         services.AddScoped<IUserRegisteredUseCase, UserRegisteredUseCase>();
         
         return services;
