@@ -13,6 +13,8 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\ReferralService.Contracts\ReferralService.Contracts.csproj" />
+      <ProjectReference Include="..\ReferralService.Core\ReferralService.Core.csproj" />
       <ProjectReference Include="..\ReferralService.Data\ReferralService.Data.csproj" />
     </ItemGroup>
 
