@@ -10,7 +10,6 @@ namespace RentalService.UnitTests;
 public class UserRegisteredFlow : TestBase
 {
     private readonly Mock<ICreditService> _creditService = new();
-
     private readonly IUserRegisteredUseCase _sut;
     
     public UserRegisteredFlow()
