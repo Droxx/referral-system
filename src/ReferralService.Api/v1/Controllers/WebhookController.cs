@@ -9,7 +9,7 @@ namespace ReferralService.v1.Controllers;
 public class WebhookController(ILogger<WebhookController> logger) : ControllerBase
 {
     /// <summary>
-    /// Webhook endpoint to handle user registered events.
+    /// Handle user registered events.
     /// </summary>
     /// <param name="payload"><inheritdoc cref="UserRegisteredHookPayload"/></param>
     /// <returns>200OK when data processed</returns>
@@ -22,4 +22,18 @@ public class WebhookController(ILogger<WebhookController> logger) : ControllerBa
         return Ok();
     }
     
+    /// <summary>
+    /// Handle rental changed events.
+    /// </summary>
+    /// <param name="payload"><inheritdoc cref="RentalChangedHookPayload"/></param>
+    /// <returns>200OK when data processed</returns>
+    [HttpPatch]
+    [Route("rental-changed")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> RentalChanged([FromBody] RentalChangedHookPayload payload, [FromServices] IRentalChangedUseCase useCase)
+    {
+        await useCase.Handle(new RentalChangedUseCaseInput(payload.RentalId, payload.RenterId, payload.OwnerId,
+            Enum.Parse<Data.Models.RentalState>(payload.State.ToString())));
+        return Ok();
+    }
 }

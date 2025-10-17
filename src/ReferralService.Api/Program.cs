@@ -1,3 +1,4 @@
+using ReferralService.Core.Settings;
 using ReferralService.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,8 @@ builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddApiServices();
+
+builder.Services.Configure<ServiceUrisSettings>(builder.Configuration.GetSection("ServiceUris"));
 
 var app = builder.Build();
 

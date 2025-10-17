@@ -17,10 +17,12 @@ public static class ServiceCollection
         services.AddMappers();
 
         services.AddHttpClient<IEmailService, EmailService>();
+        services.AddHttpClient<ICreditService, CreditService>();
 
         services.AddScoped<IGetReferralByIdUseCase, GetReferralByIdUseCase>();
         services.AddScoped<InviteUserUseCase, InviteUserUseCase>();
         services.AddScoped<IUserRegisteredUseCase, UserRegisteredUseCase>();
+        services.AddScoped<IRentalChangedUseCase, RentalChangedUseCase>();
         
         return services;
     }
